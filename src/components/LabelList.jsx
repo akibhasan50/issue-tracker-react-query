@@ -10,12 +10,12 @@ export default function LabelList({ selected, toggle }) {
       ) : (
         <ul>
           {labelsQuery.data.map((label) => (
-            <li>
+            <li key={label.id}>
               <button
                 className={`label ${
                   selected?.includes(label.id) ? " selected" : ""
                 } ${label.color}`}
-                key={label.id}
+              
                 onClick={() => toggle(label.id)}
               >
                 {label.name}
