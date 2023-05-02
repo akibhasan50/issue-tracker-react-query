@@ -22,7 +22,6 @@ export default function IssueDetails() {
   const issueQuery = useIssueData(number);
   const commentsQuery = useIssueComments(number);
 
-  console.log(commentsQuery.data);
 
   return (
     <div className="issue-details">
@@ -41,6 +40,7 @@ export default function IssueDetails() {
                 ))
               )}
             </section>
+            <aside></aside>
           </main>
         </>
       )}
