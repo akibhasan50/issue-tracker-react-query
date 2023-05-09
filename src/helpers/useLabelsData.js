@@ -1,8 +1,10 @@
 import { useQuery } from "react-query";
 
 export const useLabelsData = () => {
-  const labelsQuery = useQuery(["labels"], () => {
-    return fetch("/api/labels").then((res) => res.json());
+  const labelsQuery = useQuery(["labels"], ({signal}) => {
+    return fetch("/api/labels",{signal}).then((res) => res.json());
+  },  {
+    staleTime: 1000 * 60 * 60,
   });
   return labelsQuery;
 };

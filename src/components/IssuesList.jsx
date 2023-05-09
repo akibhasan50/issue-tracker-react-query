@@ -1,14 +1,19 @@
 import { useQuery } from "react-query";
 import { IssueItem } from "./IssueItem";
 import { useState } from "react";
+import {fetchWithError} from "../helpers/fetchWithError";
 export default function IssuesList({ labels, status }) {
-  const issuesQuery = useQuery(["issues", { labels, status }], () => {
-    const labelString = labels.map((label) => `labels[]=${label}`).join("&");
-    const statusString = status ? `&status=${status}` : "";
-    return fetch(`/api/issues?${labelString}${statusString}`).then((res) =>
-      res.json()
-    );
-  });
+  const issuesQuery = useQuery(
+    ["issues", { labels, status }],
+    () => {
+      const labelString = labels.map((label) => `labels[]=${label}`).join("&");
+      const statusString = status ? `&status=${status}` : "";
+      return fetchWithError(`/api/issues?${labelString}${statusString}`);
+    },
+    {
+      staleTime: 1000 * 60,
+    }
+  );
   const [searchValue, setSearchValue] = useState("");
 
   const searchQuery = useQuery(
@@ -44,6 +49,8 @@ export default function IssuesList({ labels, status }) {
       <h2>Issues List</h2>
       {issuesQuery.isLoading ? (
         <p>Loading...</p>
+      ) : issuesQuery.isError ? (
+        <p>{issuesQuery.error.message}</p>
       ) : searchQuery.fetchStatus === "idle" &&
         searchQuery.isLoading === true ? (
         <ul className="issues-list">
@@ -63,7 +70,7 @@ export default function IssuesList({ labels, status }) {
         </ul>
       ) : (
         <>
-          <h2>Search Resule</h2>
+          <h2>Search Results</h2>
           {searchQuery.isLoading ? (
             <p>Loading....</p>
           ) : (
