@@ -10,7 +10,7 @@ function useIssueData(issueNumber) {
   });
 }
 const useIssueComments = (issueNumber) => {
-  return useQuery(["issue", issueNumber, "comments"], ({signal}) => {
+  return useQuery(["issues", issueNumber, "comments"], ({signal}) => {
     return fetch(`/api/issues/${issueNumber}/comments`,{signal}).then((response) =>
       response.json()
     );

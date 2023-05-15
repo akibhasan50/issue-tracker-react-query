@@ -17,10 +17,13 @@ export default function IssuesList({ labels, status }) {
         }
       );
       results.forEach((issue) => {
-        queryClient.setQueriesData(["issues", issue.number.toString()], issue);
+        return queryClient.setQueryData(
+          ["issues", issue.number.toString()],
+          issue
+        );
       });
 
-      return results
+      return results;
     }
   );
   const [searchValue, setSearchValue] = useState("");
