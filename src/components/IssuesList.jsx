@@ -1,18 +1,26 @@
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { IssueItem } from "./IssueItem";
 import { useState } from "react";
 import { fetchWithError } from "../helpers/fetchWithError";
 import Loader from "./Loader";
 export default function IssuesList({ labels, status }) {
+  const queryClient = useQueryClient();
   const issuesQuery = useQuery(
     ["issues", { labels, status }],
-    () => {
+    async ({ signal }) => {
       const labelString = labels.map((label) => `labels[]=${label}`).join("&");
       const statusString = status ? `&status=${status}` : "";
-      return fetchWithError(`/api/issues?${labelString}${statusString}`);
-    },
-    {
-      staleTime: 1000 * 60,
+      const results = await fetchWithError(
+        `/api/issues?${labelString}${statusString}`,
+        {
+          signal,
+        }
+      );
+      results.forEach((issue) => {
+        queryClient.setQueriesData(["issues", issue.number.toString()], issue);
+      });
+
+      return results
     }
   );
   const [searchValue, setSearchValue] = useState("");
@@ -47,7 +55,7 @@ export default function IssuesList({ labels, status }) {
           }}
         ></input>
       </form>
-      <h2>Issues List {issuesQuery.isFetching ? <Loader></Loader> : null }</h2>
+      <h2>Issues List {issuesQuery.isFetching ? <Loader></Loader> : null}</h2>
       {issuesQuery.isLoading ? (
         <p>Loading...</p>
       ) : issuesQuery.isError ? (
