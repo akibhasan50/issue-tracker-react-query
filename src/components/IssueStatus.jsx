@@ -6,7 +6,7 @@ function IssueStatus({ status, issueNumber }) {
   const queryClients = useQueryClient();
   const setStatus = useMutation(
     (status) => {
-      fetch(`/api/issues/${issueNumber}`, {
+      fetch(`/api/issues1/${issueNumber}`, {
         method: "PUT",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ status }),
@@ -14,10 +14,30 @@ function IssueStatus({ status, issueNumber }) {
     },
     {
       onMutate: (status) => {
+        const oldStatus = queryClients.getQueryData([
+          "issues",
+          issueNumber,
+        ]).status;
+
         queryClients.setQueryData(["issues", issueNumber], (data) => ({
           ...data,
-          sta,
+          status,
         }));
+        return function rollback() {
+          queryClients.setQueryData(["issues", issueNumber], (data) => ({
+            ...data,
+            status: oldStatus,
+          }));
+        };
+      },
+      onError: (error, variables, rollback) => {
+        console.log(error, variables, rollback);
+        rollback();
+      },
+      onSettled: () => {
+        queryClients.invalidateQueries(["issues", issueNumber], {
+          exact: true,
+        });
       },
     }
   );
