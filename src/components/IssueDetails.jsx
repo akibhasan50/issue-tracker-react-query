@@ -3,16 +3,19 @@ import { useParams } from "react-router-dom";
 import { IssueHeader } from "./IssueHeader";
 import useUserData from "../helpers/useUserData";
 import { relativeDate } from "../helpers/relativeDate";
+import IssueStatus from "./IssueStatus";
 
 function useIssueData(issueNumber) {
-  return useQuery(["issues", issueNumber], ({signal}) => {
-    return fetch(`/api/issues/${issueNumber}`,{signal}).then((res) => res.json());
+  return useQuery(["issues", issueNumber], ({ signal }) => {
+    return fetch(`/api/issues/${issueNumber}`, { signal }).then((res) =>
+      res.json()
+    );
   });
 }
 const useIssueComments = (issueNumber) => {
-  return useQuery(["issues", issueNumber, "comments"], ({signal}) => {
-    return fetch(`/api/issues/${issueNumber}/comments`,{signal}).then((response) =>
-      response.json()
+  return useQuery(["issues", issueNumber, "comments"], ({ signal }) => {
+    return fetch(`/api/issues/${issueNumber}/comments`, { signal }).then(
+      (response) => response.json()
     );
   });
 };
@@ -21,7 +24,6 @@ export default function IssueDetails() {
   const { number } = useParams();
   const issueQuery = useIssueData(number);
   const commentsQuery = useIssueComments(number);
-
 
   return (
     <div className="issue-details">
@@ -40,7 +42,12 @@ export default function IssueDetails() {
                 ))
               )}
             </section>
-            <aside></aside>
+            <aside>
+              <IssueStatus
+                status={issueQuery.data.status}
+                issueNumber={issueQuery.data.number.toString()}
+              ></IssueStatus>
+            </aside>
           </main>
         </>
       )}

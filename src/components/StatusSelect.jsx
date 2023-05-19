@@ -21,10 +21,10 @@ export const possibleStataus = [
   },
 ];
 
-export function StatusSelect({ value, onChange }) {
+export function StatusSelect({ value, onChange, noEmptyOption = false }) {
   return (
     <select value={value} onChange={onChange} className="status-select">
-      <option value="">Select a status filter</option>
+      {noEmptyOption ? null : <option value="">Select a status filter</option>}{" "}
       {possibleStataus.map((status) => (
         <option value={status.id} key={status.id}>
           {status.label}
