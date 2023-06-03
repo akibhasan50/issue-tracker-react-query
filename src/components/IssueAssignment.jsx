@@ -12,7 +12,7 @@ export default function IssueAssignment({ assignee, issueNumber }) {
   const queryClients = useQueryClient();
   const setAssignment = useMutation(
     (assignee) => {
-      fetch(`/api/issues/${issueNumber}`, {
+     return fetch(`/api/issues/${issueNumber}`, {
         method: "PUT",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ assignee }),

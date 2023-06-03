@@ -6,7 +6,7 @@ function IssueStatus({ status, issueNumber }) {
   const queryClients = useQueryClient();
   const setStatus = useMutation(
     (status) => {
-      fetch(`/api/issues/${issueNumber}`, {
+    return  fetch(`/api/issues/${issueNumber}`, {
         method: "PUT",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ status }),
